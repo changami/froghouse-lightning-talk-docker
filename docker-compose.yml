@@ -1,26 +1,31 @@
-webserver:
-  image: wpsource
-  command: php -S 0.0.0.0:8000 -t /var/www/html
-  ports:
-    - "80:8000"
-  volumes:
-    - ./wordpress:/var/www/html
-  links:
-    - dbserver
+version: '2.0'
+services:
+  webserver:
+    image: wpsource
+    command: php -S 0.0.0.0:8000 -t /var/www/html
+    ports:
+      - 80:8000
+    volumes:
+      - ./wordpress:/var/www/html:rw
+    links:
+      - dbserver
 
-phpmyadminserver:
-  image: phpmyadmin/phpmyadmin
-  ports:
-    - "8080:80"
-  links:
-    - "dbserver:db"
+  phpmyadminserver:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    links:
+      - dbserver:db
 
-dbserver:
-  image: orchardup/mysql
-  volumes_from:
-    - datacontainer
-  environment:
-    MYSQL_ROOT_PASSWORD: admin
-    MYSQL_DATABASE: wordpress
-    MYSQL_USER: wpadmin
-    MYSQL_PASSWORD: wppassword
+  dbserver:
+    image: orchardup/mysql
+    volumes_from:
+      - container:datacontainer:rw
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wpadmin
+      MYSQL_PASSWORD: wppassword
+
+volumes: {}
+networks: {}
